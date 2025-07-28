@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, ParseIntPipe } from '@nestjs/common';
 import { IUser, UsersService } from './users.service';
 
 export type TQuery = {
@@ -24,7 +24,7 @@ export class UsersController {
     }
     // users/1
     @Get(':id')
-    find_users(@Param('id') id: string) {
+    find_users(@Param('id', ParseIntPipe) id: number) {
         return {id}
     }
 
