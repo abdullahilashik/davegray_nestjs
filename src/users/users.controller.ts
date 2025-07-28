@@ -1,10 +1,20 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { IUser, UsersService } from './users.service';
+
+export type TQuery = {
+    role?: 'ADMIN' | 'TEACHER' | 'STUDENT'
+}
 
 @Controller('users')
 export class UsersController {
+
+    constructor(private readonly usersService: UsersService){
+
+    }
+
     @Get()
-    index(){
-        return 'test';
+    find_user(@Query('username') username?: string) : (IUser | IUser[]) {
+        return this.usersService.find_user(username);
     }
 
     // users/intern
@@ -14,7 +24,7 @@ export class UsersController {
     }
     // users/1
     @Get(':id')
-    find_user(@Param('id') id: string) {
+    find_users(@Param('id') id: string) {
         return {id}
     }
 
