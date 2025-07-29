@@ -1,14 +1,6 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Query,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, ParseIntPipe, ValidationPipe } from '@nestjs/common';
 import { IUser, UsersService } from './users.service';
+import UserDTO from './dto/user.dto';
 
 export type TQuery = {
   role?: 'ADMIN' | 'TEACHER' | 'STUDENT';
@@ -23,21 +15,24 @@ export class UsersController {
     return this.usersService.find_user(username);
   }
 
-  // users/intern
-  @Get('intern')
-  find_interns() {
-    return 'interns';
-  }
-  // users/1
-  @Get(':id')
-  find_users(@Param('id') id: string) {
-    return { id };
-  }
+    // users/intern
+    @Get('intern')
+    find_interns(){
+        return 'interns';
+    }
+    // users/1
+    @Get(':id')
+    find_users(@Param('id', ParseIntPipe) id: number) {
+        return {id}
+    }
 
-  @Post()
-  store(@Body() user: {}) {
-    return user;
-  }
+    @Post()
+    store(@Body(ValidationPipe) user: UserDTO){
+        return {
+            ...user,
+            'type': 'Create user'
+        };
+    }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() userUpdate: {}) {

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3-Item Expanding Carousel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .carousel-container {
+            width: 100%;
+            max-width: 1400px;
+            position: relative;
+            overflow: hidden;
+            padding: 0 60px;
+        }
+
+        .carousel-track {
+            display: flex;
+            gap: 20px;
+            height: 400px;
+            transition: transform 0.5s ease;
+        }
+
+        .carousel-item {
+            flex-shrink: 0;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            height: 100%;
+            width: calc((100% - 40px) / 3); /* Base width for 3 items */
+        }
+
+        /* Hover state - exactly 667px */
+        .carousel-item:hover {
+            width: 667px !important;
+            z-index: 10;
+        }
+
+        /* Non-hovered items adjust automatically */
+        .carousel-item:not(:hover) {
+            flex-grow: 1;
+            min-width: 100px;
+        }
+
+        .carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 15px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .carousel-item:hover .carousel-caption {
+            transform: translateY(0);
+        }
+
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.8);
+            border: none;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .carousel-btn:hover {
+            background: white;
+        }
+
+        .carousel-btn.prev {
+            left: 10px;
+        }
+
+        .carousel-btn.next {
+            right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="carousel-container">
+        <div class="carousel-track">
+            <!-- Items will be added by JavaScript -->
+        </div>
+        <button class="carousel-btn prev">&lt;</button>
+        <button class="carousel-btn next">&gt;</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const track = document.querySelector('.carousel-track');
+            const prevBtn = document.querySelector('.prev');
+            const nextBtn = document.querySelector('.next');
+            const container = document.querySelector('.carousel-container');
+            
+            // Sample data
+            const items = [
+                { image: 'https://source.unsplash.com/random/800x600?city=1', title: 'City 1', description: 'Urban landscape' },
+                { image: 'https://source.unsplash.com/random/800x600?city=2', title: 'City 2', description: 'Downtown view' },
+                { image: 'https://source.unsplash.com/random/800x600?city=3', title: 'City 3', description: 'Skyline at night' },
+                { image: 'https://source.unsplash.com/random/800x600?city=4', title: 'City 4', description: 'Modern architecture' },
+                { image: 'https://source.unsplash.com/random/800x600?city=5', title: 'City 5', description: 'Street scene' },
+                { image: 'https://source.unsplash.com/random/800x600?city=6', title: 'City 6', description: 'Aerial view' }
+            ];
+
+            // Create carousel items
+            items.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'carousel-item';
+                div.innerHTML = `
+                    <img src="${item.image}" alt="${item.title}">
+                    <div class="carousel-caption">
+                        <h3>${item.title}</h3>
+                        <p>${item.description}</p>
+                    </div>
+                `;
+                track.appendChild(div);
+            });
+
+            let currentIndex = 0;
+            const visibleItems = 3;
+            const totalItems = items.length;
+            const expandedWidth = 667;
+
+            function updateCarousel() {
+                const containerWidth = container.offsetWidth;
+                const baseWidth = (containerWidth - 40) / 3;
+                
+                // Calculate required track width to show all items
+                const trackWidth = items.length * (baseWidth + 20) - 20;
+                track.style.width = `${trackWidth}px`;
+                
+                // Position the track
+                const offset = -currentIndex * (baseWidth + 20);
+                track.style.transform = `translateX(${offset}px)`;
+                
+                // Set base width for all items
+                document.querySelectorAll('.carousel-item').forEach(item => {
+                    item.style.width = `${baseWidth}px`;
+                });
+            }
+
+            // Navigation
+            function moveCarousel(direction) {
+                currentIndex += direction;
+                
+                // Circular navigation
+                if (currentIndex >= totalItems - visibleItems + 1) currentIndex = 0;
+                if (currentIndex < 0) currentIndex = totalItems - visibleItems;
+                
+                updateCarousel();
+            }
+
+            prevBtn.addEventListener('click', () => moveCarousel(-1));
+            nextBtn.addEventListener('click', () => moveCarousel(1));
+
+            // Initialize
+            window.addEventListener('resize', updateCarousel);
+            updateCarousel();
+        });
+    </script>
+</body>
+</html>
