@@ -1,5 +1,6 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, ParseIntPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, ParseIntPipe, ValidationPipe } from '@nestjs/common';
 import { IUser, UsersService } from './users.service';
+import UserDTO from './dto/user.dto';
 
 export type TQuery = {
     role?: 'ADMIN' | 'TEACHER' | 'STUDENT'
@@ -29,8 +30,11 @@ export class UsersController {
     }
 
     @Post()
-    store(@Body() user: {}){
-        return user;
+    store(@Body(ValidationPipe) user: UserDTO){
+        return {
+            ...user,
+            'type': 'Create user'
+        };
     }
 
     @Patch(':id')
