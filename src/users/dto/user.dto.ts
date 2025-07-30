@@ -1,8 +1,8 @@
-import {PartialType} from '@nestjs/mapped-types'
+import { PartialType } from '@nestjs/mapped-types'
 
 
 import {
-    IsEmail, IsUrl, IsNotEmpty, IsString, IsNumber, IsPhoneNumber, 
+    IsEmail, IsUrl, IsNotEmpty, IsString, IsNumber, IsPhoneNumber,
     Length, Matches, ValidateNested, IsLatitude, IsLongitude
 } from 'class-validator';
 import { Type } from 'class-transformer';
@@ -87,5 +87,5 @@ export default class UserDTO {
     company: CompanyDTO;
 }
 
-export class CreateUserDTO extends PartialType(UserDTO) {}
-export class UpdateUserDTO extends PartialType(UserDTO) {}
+export class CreateUserDTO extends PartialType(UserDTO) { }
+export class UpdateUserDTO extends PartialType(UserDTO) { }
