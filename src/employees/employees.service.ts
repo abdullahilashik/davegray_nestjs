@@ -1,32 +1,80 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from 'generated/prisma';
+import { CreateEmployeeDto } from './dto/create-employee.dto';
+import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { DatabaseService } from 'src/database/database.service';
+import { Prisma } from 'generated/prisma';
 
 @Injectable()
 export class EmployeesService {
 
-  constructor(private readonly databaseService: DatabaseService){}
+  constructor(private readonly databaseService: DatabaseService){
 
-  async create(createEmployeeDto: Prisma.EmployeeCreateInput) {
-    await this.databaseService.employee.create({
+  }
+
+  /**
+   * Create new employee
+   * @param createEmployeeDto 
+   * @returns 
+   */
+  create(createEmployeeDto: Prisma.EmployeeCreateInput) {
+    const item = this.databaseService.employee.create({
       data: createEmployeeDto
     });
-    return 'This action adds a new employee';
+    return item;
+  }
+  /**
+   * Find all employee or filter by role
+   * @param role 
+   * @returns 
+   */
+
+  findAll(role?: 'INTERN' | 'ADMIN' | 'ENGINEER') {
+    
+    const employees = this.databaseService.employee.findMany({
+      where: {
+        role: role
+      }
+    })
+    return employees;    
   }
 
-  async findAll(role? : 'INTERN' | 'ADMIN' | 'ENGINEER') {
-    return `This action returns all employees`;
-  }  
-
-  async findOne(id: number) {
-    return `This action returns a #${id} employee`;
+  /**
+   * Find single employee by id
+   * @param id 
+   * @returns 
+   */
+  findOne(id: number) {
+    const employee = this.databaseService.employee.findFirst({
+      where: {
+        id
+      }
+    });
+    return employee;    
   }
 
-  async update(id: number, updateEmployeeDto: Prisma.EmployeeUpdateInput) {
-    return `This action updates a #${id} employee`;
+  /**
+   * Update employee
+   * @param id 
+   * @param updateEmployeeDto 
+   * @returns 
+   */
+
+  update(id: number, updateEmployeeDto: Prisma.EmployeeUpdateInput) {
+    const updated = this.databaseService.employee.update({
+      where: {
+        id: id
+      },
+      data: updateEmployeeDto
+    });
+    return updated;    
   }
 
-  async remove(id: number) {
-    return `This action removes a #${id} employee`;
+  remove(id: number) {
+    const deleted = this.databaseService.employee.delete({
+      where: {
+        id
+      }
+    });
+    return deleted;
   }
 }
