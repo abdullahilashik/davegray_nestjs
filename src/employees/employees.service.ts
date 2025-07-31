@@ -1,9 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from 'generated/prisma';
+import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
 export class EmployeesService {
+
+  constructor(private readonly databaseService: DatabaseService){}
+
   async create(createEmployeeDto: Prisma.EmployeeCreateInput) {
+    await this.databaseService.employee.create({
+      data: createEmployeeDto
+    });
     return 'This action adds a new employee';
   }
 

@@ -14,7 +14,7 @@ export class EmployeesController {
   }
 
   @Get()
-  async findAll(@Query('role') role? : 'INTERN' | 'ADMIN' | 'ENGINEER') {
+  async findAll(@Query('role') role? : 'INTERN' | 'ADMIN' | 'ENGINEER') {    
     return this.employeesService.findAll(role);
   }
 
