@@ -1,6 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, ParseIntPipe, ValidationPipe } from '@nestjs/common';
 import { IUser, UsersService } from './users.service';
 import UserDTO from './dto/user.dto';
+import { SkipThrottle } from '@nestjs/throttler';
+import { skip } from 'node:test';
 
 export type TQuery = {
   role?: 'ADMIN' | 'TEACHER' | 'STUDENT';
@@ -21,6 +23,7 @@ export class UsersController {
         return 'interns';
     }
     // users/1
+    @SkipThrottle()
     @Get(':id')
     find_users(@Param('id', ParseIntPipe) id: number) {
         return {id}

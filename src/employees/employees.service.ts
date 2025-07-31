@@ -1,79 +1,73 @@
 import { Injectable } from '@nestjs/common';
-import { CreateEmployeeDto } from './dto/create-employee.dto';
-import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { DatabaseService } from 'src/database/database.service';
 import { Prisma } from 'generated/prisma';
 
 @Injectable()
 export class EmployeesService {
-
-  constructor(private readonly databaseService: DatabaseService){
-
-  }
+  constructor(private readonly databaseService: DatabaseService) {}
 
   /**
    * Create new employee
-   * @param createEmployeeDto 
-   * @returns 
+   * @param createEmployeeDto
+   * @returns
    */
   create(createEmployeeDto: Prisma.EmployeeCreateInput) {
     const item = this.databaseService.employee.create({
-      data: createEmployeeDto
+      data: createEmployeeDto,
     });
     return item;
   }
   /**
    * Find all employee or filter by role
-   * @param role 
-   * @returns 
+   * @param role
+   * @returns
    */
 
   findAll(role?: 'INTERN' | 'ADMIN' | 'ENGINEER') {
-    
     const employees = this.databaseService.employee.findMany({
       where: {
-        role: role
-      }
-    })
-    return employees;    
+        role: role,
+      },
+    });
+    return employees;
   }
 
   /**
    * Find single employee by id
-   * @param id 
-   * @returns 
+   * @param id
+   * @returns
    */
   findOne(id: number) {
     const employee = this.databaseService.employee.findFirst({
       where: {
-        id
-      }
+        id,
+      },
     });
-    return employee;    
+    return employee;
   }
 
   /**
    * Update employee
-   * @param id 
-   * @param updateEmployeeDto 
-   * @returns 
+   * @param id
+   * @param updateEmployeeDto
+   * @returns
    */
 
   update(id: number, updateEmployeeDto: Prisma.EmployeeUpdateInput) {
     const updated = this.databaseService.employee.update({
       where: {
-        id: id
+        id: id,
       },
-      data: updateEmployeeDto
+      data: updateEmployeeDto,
     });
-    return updated;    
+    return updated;
   }
 
   remove(id: number) {
     const deleted = this.databaseService.employee.delete({
       where: {
-        id
-      }
+        id,
+      },
     });
     return deleted;
   }

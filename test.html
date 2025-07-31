@@ -1,198 +1,205 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3-Item Expanding Carousel</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <title>Carousel 3-Up Expand on Hover</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
+    body {
+      background: #111;
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
 
-        .carousel-container {
-            width: 100%;
-            max-width: 1400px;
-            position: relative;
-            overflow: hidden;
-            padding: 0 60px;
-        }
+    .carousel-wrapper {
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
 
-        .carousel-track {
-            display: flex;
-            gap: 20px;
-            height: 400px;
-            transition: transform 0.5s ease;
-        }
+    .arrow {
+      font-size: 2.5rem;
+      color: white;
+      cursor: pointer;
+      user-select: none;
+      z-index: 10;
+      padding: 0 20px;
+    }
 
-        .carousel-item {
-            flex-shrink: 0;
-            background: #fff;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            position: relative;
-            height: 100%;
-            width: calc((100% - 40px) / 3); /* Base width for 3 items */
-        }
+    .carousel {
+      width: 1260px; /* 3 cards × 400 + 2×30px gap */
+      height: 800px;
+      overflow: visible; /* 👈 allow overflow to fix clipping */
+      position: relative;
+    }
 
-        /* Hover state - exactly 667px */
-        .carousel-item:hover {
-            width: 667px !important;
-            z-index: 10;
-        }
+    .carousel-track {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+      gap: 30px;
+      position: relative;
+    }
 
-        /* Non-hovered items adjust automatically */
-        .carousel-item:not(:hover) {
-            flex-grow: 1;
-            min-width: 100px;
-        }
+    .carousel-item {
+      width: 400px;
+      height: 800px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      transition: transform 0.3s ease;
+      flex-shrink: 0;
+      transform-origin: center;
+      z-index: 1;
+    }
 
-        .carousel-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: all 0.3s ease;
-        }
+    .carousel-item:hover {
+      transform: scale(1.5); /* expand 1.5x */
+      z-index: 5;
+    }
 
-        .carousel-caption {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 15px;
-            transform: translateY(100%);
-            transition: transform 0.3s ease;
-        }
+    /* Last item should expand leftward */
+    .carousel-item:last-child:hover {
+      transform-origin: right;
+    }
 
-        .carousel-item:hover .carousel-caption {
-            transform: translateY(0);
-        }
+    /* First item should expand rightward */
+    .carousel-item:first-child:hover {
+      transform-origin: left;
+    }
 
-        .carousel-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 40px;
-            height: 40px;
-            background: rgba(255,255,255,0.8);
-            border: none;
-            border-radius: 50%;
-            font-size: 20px;
-            cursor: pointer;
-            z-index: 20;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+    .info-box {
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      padding: 20px;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      transform: translateY(100%);
+      transition: transform 0.4s ease;
+    }
 
-        .carousel-btn:hover {
-            background: white;
-        }
+    .carousel-item:hover .info-box {
+      transform: translateY(0);
+    }
 
-        .carousel-btn.prev {
-            left: 10px;
-        }
+    .info-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
 
-        .carousel-btn.next {
-            right: 10px;
-        }
-    </style>
+    .info-desc {
+      margin: 10px 0;
+    }
+
+    .info-btn {
+      margin-top: 10px;
+      padding: 10px;
+      width: 100%;
+      background-color: #00aaff;
+      color: white;
+      text-decoration: none;
+      border: none;
+      border-radius: 5px;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
-    <div class="carousel-container">
-        <div class="carousel-track">
-            <!-- Items will be added by JavaScript -->
+
+  <div class="carousel-wrapper">
+    <div class="arrow" id="prev">&#10094;</div>
+
+    <div class="carousel">
+      <div class="carousel-track" id="carousel-track">
+        <div class="carousel-item" style="background-image: url('https://picsum.photos/id/1018/400/800')">
+          <div class="info-box">
+            <div class="info-title">Title 1</div>
+            <div class="info-desc">Description for card 1</div>
+            <a class="info-btn" href="#">Learn More</a>
+          </div>
         </div>
-        <button class="carousel-btn prev">&lt;</button>
-        <button class="carousel-btn next">&gt;</button>
+        <div class="carousel-item" style="background-image: url('https://picsum.photos/id/1020/400/800')">
+          <div class="info-box">
+            <div class="info-title">Title 2</div>
+            <div class="info-desc">Description for card 2</div>
+            <a class="info-btn" href="#">Learn More</a>
+          </div>
+        </div>
+        <div class="carousel-item" style="background-image: url('https://picsum.photos/id/1025/400/800')">
+          <div class="info-box">
+            <div class="info-title">Title 3</div>
+            <div class="info-desc">Description for card 3</div>
+            <a class="info-btn" href="#">Learn More</a>
+          </div>
+        </div>
+        <div class="carousel-item" style="background-image: url('https://picsum.photos/id/1035/400/800')">
+          <div class="info-box">
+            <div class="info-title">Title 4</div>
+            <div class="info-desc">Description for card 4</div>
+            <a class="info-btn" href="#">Learn More</a>
+          </div>
+        </div>
+        <div class="carousel-item" style="background-image: url('https://picsum.photos/id/1042/400/800')">
+          <div class="info-box">
+            <div class="info-title">Title 5</div>
+            <div class="info-desc">Description for card 5</div>
+            <a class="info-btn" href="#">Learn More</a>
+          </div>
+        </div>
+        <div class="carousel-item" style="background-image: url('https://picsum.photos/id/1043/400/800')">
+          <div class="info-box">
+            <div class="info-title">Title 6</div>
+            <div class="info-desc">Description for card 6</div>
+            <a class="info-btn" href="#">Learn More</a>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const track = document.querySelector('.carousel-track');
-            const prevBtn = document.querySelector('.prev');
-            const nextBtn = document.querySelector('.next');
-            const container = document.querySelector('.carousel-container');
-            
-            // Sample data
-            const items = [
-                { image: 'https://source.unsplash.com/random/800x600?city=1', title: 'City 1', description: 'Urban landscape' },
-                { image: 'https://source.unsplash.com/random/800x600?city=2', title: 'City 2', description: 'Downtown view' },
-                { image: 'https://source.unsplash.com/random/800x600?city=3', title: 'City 3', description: 'Skyline at night' },
-                { image: 'https://source.unsplash.com/random/800x600?city=4', title: 'City 4', description: 'Modern architecture' },
-                { image: 'https://source.unsplash.com/random/800x600?city=5', title: 'City 5', description: 'Street scene' },
-                { image: 'https://source.unsplash.com/random/800x600?city=6', title: 'City 6', description: 'Aerial view' }
-            ];
+    <div class="arrow" id="next">&#10095;</div>
+  </div>
 
-            // Create carousel items
-            items.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'carousel-item';
-                div.innerHTML = `
-                    <img src="${item.image}" alt="${item.title}">
-                    <div class="carousel-caption">
-                        <h3>${item.title}</h3>
-                        <p>${item.description}</p>
-                    </div>
-                `;
-                track.appendChild(div);
-            });
+  <script>
+    const track = document.getElementById('carousel-track');
+    const prev = document.getElementById('prev');
+    const next = document.getElementById('next');
 
-            let currentIndex = 0;
-            const visibleItems = 3;
-            const totalItems = items.length;
-            const expandedWidth = 667;
+    let currentIndex = 0;
+    const visibleCards = 3;
+    const cardWidth = 400;
+    const gap = 30;
+    const moveAmount = (cardWidth + gap) * visibleCards;
 
-            function updateCarousel() {
-                const containerWidth = container.offsetWidth;
-                const baseWidth = (containerWidth - 40) / 3;
-                
-                // Calculate required track width to show all items
-                const trackWidth = items.length * (baseWidth + 20) - 20;
-                track.style.width = `${trackWidth}px`;
-                
-                // Position the track
-                const offset = -currentIndex * (baseWidth + 20);
-                track.style.transform = `translateX(${offset}px)`;
-                
-                // Set base width for all items
-                document.querySelectorAll('.carousel-item').forEach(item => {
-                    item.style.width = `${baseWidth}px`;
-                });
-            }
+    const totalItems = track.children.length;
+    const maxIndex = Math.ceil(totalItems / visibleCards) - 1;
 
-            // Navigation
-            function moveCarousel(direction) {
-                currentIndex += direction;
-                
-                // Circular navigation
-                if (currentIndex >= totalItems - visibleItems + 1) currentIndex = 0;
-                if (currentIndex < 0) currentIndex = totalItems - visibleItems;
-                
-                updateCarousel();
-            }
+    function updateCarousel() {
+      const offset = currentIndex * moveAmount;
+      track.style.transform = `translateX(-${offset}px)`;
+    }
 
-            prevBtn.addEventListener('click', () => moveCarousel(-1));
-            nextBtn.addEventListener('click', () => moveCarousel(1));
+    prev.addEventListener('click', () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateCarousel();
+      }
+    });
 
-            // Initialize
-            window.addEventListener('resize', updateCarousel);
-            updateCarousel();
-        });
-    </script>
+    next.addEventListener('click', () => {
+      if (currentIndex < maxIndex) {
+        currentIndex++;
+        updateCarousel();
+      }
+    });
+  </script>
 </body>
 </html>
